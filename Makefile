@@ -176,7 +176,28 @@ flash:
 ifndef PDIR
 	$(MAKE) -C ./app flash
 else
-	$(ESPTOOL) --port $(ESPPORT) write_flash 0x00000 $(FIRMWAREDIR)0x00000.bin 0x10000 $(FIRMWAREDIR)0x10000.bin
+	$(ESPTOOL) --port $(ESPPORT) write_flash 0x00000 $(FIRMWAREDIR)0x00000.bin 0x10000 $(FIRMWAREDIR)0x10000.bin 0x3fc000 $(FIRMWAREDIR)esp_init_data_default.bin 0x3fe000 $(FIRMWAREDIR)blank.bin || ($(MAKE) flash_USB1; exit 1)
+endif
+
+flash_USB1: 
+ifndef PDIR
+	$(MAKE) -C ./app flash
+else
+	$(ESPTOOL) --port /dev/ttyUSB1 write_flash 0x00000 $(FIRMWAREDIR)0x00000.bin 0x10000 $(FIRMWAREDIR)0x10000.bin 0x3fc000 $(FIRMWAREDIR)esp_init_data_default.bin 0x3fe000 $(FIRMWAREDIR)blank.bin
+endif
+
+fast_flash_USB0: 
+ifndef PDIR
+	$(MAKE) -C ./app fast_flash_USB0
+else
+	$(ESPTOOL) --port $(ESPPORT) --baud 460800 write_flash 0x00000 $(FIRMWAREDIR)0x00000.bin 0x10000 $(FIRMWAREDIR)0x10000.bin 0x3fc000 $(FIRMWAREDIR)esp_init_data_default.bin 0x3fe000 $(FIRMWAREDIR)blank.bin
+endif
+
+fast_flash_USB1: 
+ifndef PDIR
+	$(MAKE) -C ./app fast_flash_USB1
+else
+	$(ESPTOOL) --port $ /dev/ttyUSB1 --baud 460800 write_flash 0x00000 $(FIRMWAREDIR)0x00000.bin 0x10000 $(FIRMWAREDIR)0x10000.bin 0x3fc000 $(FIRMWAREDIR)esp_init_data_default.bin 0x3fe000 $(FIRMWAREDIR)blank.bin
 endif
 
 .subdirs:
